@@ -42,7 +42,7 @@ def cook_refs(refs, eff=None, n=4): ## lhuang: oracle will call with "average"
     for ref in refs:
         rl, counts = precook(ref, n)
         reflen.append(rl)
-        for (ngram,count) in counts.iteritems():
+        for (ngram,count) in counts.items(): #counts.iteritems():
             maxcounts[ngram] = max(maxcounts.get(ngram,0), count)
 
     # Calculate effective reference sentence length.
@@ -57,10 +57,12 @@ def cook_refs(refs, eff=None, n=4): ## lhuang: oracle will call with "average"
 
     return (reflen, maxcounts)
 
-def cook_test(test, (reflen, refmaxcounts), eff=None, n=4):
+#def cook_test(test, (reflen, refmaxcounts), eff=None, n=4):
+def cook_test(test, reftup, eff=None, n=4):
     '''Takes a test sentence and returns an object that
     encapsulates everything that BLEU needs to know about it.'''
 
+    reflen, refmaxcounts = reftup
     testlen, counts = precook(test, n, True)
 
     result = {}
@@ -77,7 +79,7 @@ def cook_test(test, (reflen, refmaxcounts), eff=None, n=4):
     result["guess"] = [max(0,testlen-k+1) for k in range(1,n+1)]
 
     result['correct'] = [0]*n
-    for (ngram, count) in counts.iteritems():
+    for (ngram, count) in counts.items(): #counts.iteritems():
         result["correct"][len(ngram)-1] += min(refmaxcounts.get(ngram,0), count)
 
     return result
